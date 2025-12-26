@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Updated Caching: Allow cache but require revalidation (ETag) -->
+    <meta http-equiv="Cache-Control" content="no-cache, must-revalidate" />
+    <title>The Wedding Nanny</title>
+    <meta name="description" content="Premium on-demand childcare and activity corners for Indian weddings." />
+    <meta name="theme-color" content="#fdecef" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E💍%3C/text%3E%3C/svg%3E">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              'rose-gemini': '#f43f5e',
+              'cream-gemini': '#fff7ed',
+              'navy-gemini': '#1e293b',
+            },
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              serif: ['Playfair Display', 'serif'],
+            }
+          }
+        }
+      }
+    </script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom Styles -->
+    <style>
+      .blob { filter: blur(22px); opacity:0.34; mix-blend-mode:multiply; animation:blobMove 9s ease-in-out infinite; }
+      @keyframes blobMove { 0%{ transform:translate(0,0) scale(1) } 33%{ transform:translate(12px,-8px) scale(1.04) } 66%{ transform:translate(-8px,8px) scale(0.98)} 100%{ transform:translate(0,0) scale(1)} }
+      .btn-raise { transition: transform .25s cubic-bezier(0.4, 0, 0.2, 1), box-shadow .25s ease; }
+      .btn-raise:hover { transform: translateY(-8px) scale(1.03); box-shadow: 0 20px 35px -10px rgba(244,63,94,0.25); }
+      .package-card { transition: transform .28s, box-shadow .28s; }
+      .package-card:hover { transform: translateY(-8px); box-shadow: 0 18px 40px rgba(15,23,42,0.12); }
+      .cta-button { background: linear-gradient(135deg, #f43f5e, #f97316); transition: all .25s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 15px rgba(244,63,94,0.35); }
+      .cta-button:hover { transform: translateY(-4px) scale(1.05); box-shadow: 0 12px 30px rgba(244,63,94,0.45); }
+      .whatsapp-btn { animation: pulse-whatsapp 2s infinite; }
+      @keyframes pulse-whatsapp { 0%,100%{ box-shadow:0 0 0 0 rgba(37,211,102,0.7)} 70%{ box-shadow:0 0 0 10px rgba(37,211,102,0)} }
+      .hero-pattern { background-image: radial-gradient(circle at 10% 10%, rgba(244,199,206,0.15), transparent 25%), radial-gradient(circle at 90% 90%, rgba(199,205,254,0.12), transparent 30%); }
+      .dark .hero-pattern { background-image: radial-gradient(circle at 10% 10%, rgba(244,63,94,0.08), transparent 30%), radial-gradient(circle at 90% 90%, rgba(30,41,59,0.5), transparent 40%); }
+      .skeleton-img { background: linear-gradient(90deg, #f3f4f6 25%, #e5e7eb 37%, #f3f4f6 63%); background-size: 400% 100%; animation: placeholderShimmer 1.6s linear infinite; }
+      .dark .skeleton-img { background: linear-gradient(90deg, #1e293b 25%, #334155 37%, #1e293b 63%); background-size: 400% 100%; }
+      @keyframes placeholderShimmer{ 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+      .dark ::-webkit-scrollbar { width: 10px; }
+      .dark ::-webkit-scrollbar-track { background: #0f172a; }
+      .dark ::-webkit-scrollbar-thumb { background: #334155; border-radius: 5px; border: 2px solid #0f172a; }
+      .dark ::-webkit-scrollbar-thumb:hover { background: #475569; }
+      .theme-transition * { transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; }
+    </style>
+
+    <!-- 1. Babel for Transpilation -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <!-- 2. ES Module Shims Config -->
+    <script>
+      window.esmsInitOptions = {
+        shimMode: true,
+        fetch: async function (url, options) {
+          const res = await fetch(url, options);
+          if (!res.ok) return res;
+          
+          const urlObj = new URL(url, window.location.href);
+          const path = urlObj.pathname;
+
+          if (path.endsWith('.tsx') || path.endsWith('.ts')) {
+            const source = await res.text();
+            try {
+              const transformed = Babel.transform(source, {
+                presets: ['react', 'typescript'],
+                filename: url,
+              }).code;
+              return new Response(transformed, { headers: { 'content-type': 'application/javascript' } });
+            } catch (e) {
+              console.error("Babel transformation failed for:", url, e);
+              return res;
+            }
+          }
+          
+          if (path.endsWith('.css')) {
+            const css = await res.text();
+            const js = `
+              const style = document.createElement('style');
+              style.textContent = ${JSON.stringify(css)};
+              document.head.appendChild(style);
+              export default {};
+            `;
+            return new Response(js, { headers: { 'content-type': 'application/javascript' } });
+          }
+
+          return res;
+        }
+      }
+    </script>
+    
+    <!-- 3. ES Module Shims Library -->
+    <script async src="https://ga.jspm.io/npm:es-module-shims@1.10.0/dist/es-module-shims.js"></script>
+    
+    <!-- 4. Consolidated Import Map (using stable React 18) -->
+    <script type="importmap-shim">
+      {
+        "imports": {
+          "react": "https://esm.sh/react@18.2.0",
+          "react/": "https://esm.sh/react@18.2.0/",
+          "react-dom": "https://esm.sh/react-dom@18.2.0",
+          "react-dom/": "https://esm.sh/react-dom@18.2.0/",
+          "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+          "react-router-dom": "https://esm.sh/react-router-dom@6.22.3?external=react,react-dom"
+        }
+      }
+    </script>
+    <link rel="stylesheet" href="/index.css">
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react-router-dom": "https://esm.sh/react-router-dom@^7.11.0",
+    "path": "https://esm.sh/path@^0.12.7",
+    "url": "https://esm.sh/url@^0.11.4",
+    "vite": "https://esm.sh/vite@^7.3.0",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2",
+    "react-dom": "https://esm.sh/react-dom@^19.2.3"
+  }
+}
+</script>
+</head>
+  <body class="bg-cream-gemini dark:bg-slate-950 text-gray-800 dark:text-slate-200 antialiased theme-transition">
+    <div id="root"></div>
+    <script type="module-shim" src="./index.tsx"></script>
+  </body>
+</html>

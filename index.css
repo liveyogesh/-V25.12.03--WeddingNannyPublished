@@ -1,0 +1,19 @@
+
+/* Wedding Nanny Base Styles - Handled via index.html and Tailwind CDN */
+/* The Wedding Nanny - Global Styles */
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Ensure smooth transitions for theme switching */
+html, body {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.no-print {
+  @media print {
+    display: none !important;
+  }
+}

@@ -1,0 +1,62 @@
+
+# 1. Security & Caching Headers
+<IfModule mod_headers.c>
+    # Allow Cross-Origin Resource Sharing (CORS)
+    Header set Access-Control-Allow-Origin "*"
+    
+    # Security headers
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "SAMEORIGIN"
+</IfModule>
+
+# 2. Advanced Caching Strategy
+<IfModule mod_headers.c>
+    # HTML: Force Revalidation
+    # Browser must check with server (ETag) before using cached version.
+    <FilesMatch "\.(html|htm)$">
+        Header set Cache-Control "no-cache, must-revalidate"
+    </FilesMatch>
+
+    # Source Code (TS/JS/CSS/JSON): Force Revalidation
+    # In this runtime setup, code changes need to be reflected immediately.
+    # 'no-cache' allows 304 Not Modified, saving bandwidth vs 'no-store'.
+    <FilesMatch "\.(js|css|json|xml|txt|ts|tsx)$">
+        Header set Cache-Control "no-cache, must-revalidate"
+    </FilesMatch>
+
+    # Static Assets (Images, Media, Fonts): Aggressive Caching
+    # These files are unlikely to change content without changing filename/path.
+    # Cache for 1 year.
+    <FilesMatch "\.(jpg|jpeg|png|gif|ico|svg|webp|avif|mp4|webm|woff|woff2|ttf|eot)$">
+        Header set Cache-Control "max-age=31536000, immutable"
+    </FilesMatch>
+</IfModule>
+
+# 3. MIME Types
+<IfModule mod_mime.c>
+    # Critical: Serve TS/TSX as JavaScript so the browser accepts them as modules.
+    AddType text/javascript .ts
+    AddType text/javascript .tsx
+    AddType text/javascript .js
+    AddType text/css .css
+    AddType application/json .json
+</IfModule>
+
+# 4. SPA Routing
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    
+    # Serve existing files/directories directly
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Return 404 for MISSING assets only (preventing index.html fallback for dead links)
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_URI} \.(js|css|png|jpg|jpeg|gif|ico|svg|json|xml|txt|ts|tsx)$ [NC]
+    RewriteRule ^ - [R=404,L]
+
+    # Catch-all: Route everything else to index.html for SPA support
+    RewriteRule ^ index.html [L]
+</IfModule>

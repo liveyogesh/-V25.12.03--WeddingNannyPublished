@@ -1,0 +1,7 @@
+{
+  "name": "(V25.12.03)-WeddingNannyPublished",
+  "description": "Premium on-demand childcare and activity corners for Indian weddings. Serving Hyderabad, Delhi NCR, Ballia, and more.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
